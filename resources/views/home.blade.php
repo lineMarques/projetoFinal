@@ -7,15 +7,45 @@
             <div class="card">
                 <div class="card-header">{{ __('Dashboard') }}</div>
 
+
+                @if (session('msg'))
+
+                <p class="msg">{{ session('msg') }} </p>
+
+                @endif
+
                 <div class="card-body">
                     @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
+                    <form action="{{ route('noticias.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="image">Adicione a Imagem</label>
+                            <input type="file" class="form-control-file p-2" name="image" aria-describedby="form-post">
+                        </div>
+                        <div class="form-group">
+                            <label for="title">Título</label>
+                            <input type="text" class="form-control p-2" name="title" aria-describedby="form-post">
+                        </div>
+                        <div class="form-group">
+                            <label for="subTitle">Sub-título</label>
+                            <input type="text" class="form-control p-2" name="subTitle">
+                        </div>
+                        <div class="form-group">
+                            <label for="content">Notícia</label>
+                            <input type="text" class="form-control p-2" name="content">
+
+                        </div>
+                        <button type="submit" class="m-2 btn btn-primary">Enviar</button>
+                    </form>
+
+
                 </div>
+
             </div>
         </div>
     </div>

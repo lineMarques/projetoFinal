@@ -8,6 +8,7 @@ use App\Models\{
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -19,30 +20,44 @@ class PostController extends Controller
         $this->post = $post;
         $this->user = $user;
     }
-
     public function index()
     {
-        $post = $this->post->all();
-        return view('noticias');
-    }
 
-    public function create()
-    {
-        return view('dashboard');
 
+        $userPost = DB::table('posts')
+            ->select('posts.id', 'title', 'subTitle', 'name', 'image', 'posts.created_at')
+            ->join('users', 'users.id', '=', 'posts.user_id')
+            ->orderByDesc('created_at')
+            ->paginate(20);
+
+        return view('noticias', compact('userPost'));
     }
 
     public function store(Request $request)
     {
+
+        $post = $this->post;
+
+        if ($request->image) {
+
+            $post->image = $request->image->store('images');
+
+        }
+
+
+
         $user = $this->user->find(Auth::id());
-        $post = $this->post->create($request->all());
+
+        $user->posts()->create($request->all());
+
+        return redirect('home')->with('msg', 'Sua notícia foi criada');
 
     }
 
-    public function show()
+    public function show($id)
     {
-
-
+       /*  $post = $this->post->findOrFail($id);
+        return view('show', compact('post')); */
     }
 
     public function update()
@@ -52,6 +67,9 @@ class PostController extends Controller
 
     public function destroy()
     {
+        $post = $this->post->user()->Auth::user();
+        $post->delete();
+        return redirect('/');
 
     }
 
