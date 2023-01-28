@@ -9,6 +9,7 @@ use App\Models\{
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -36,15 +37,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
 
-        $post = $this->post;
-
-        if ($request->image) {
-
-            $post->image = $request->image->store('images');
-
-        }
-
-
+        $data = $request->all();
 
         $user = $this->user->find(Auth::id());
 
@@ -56,8 +49,8 @@ class PostController extends Controller
 
     public function show($id)
     {
-       /*  $post = $this->post->findOrFail($id);
-        return view('show', compact('post')); */
+        $post = $this->post->findOrFail($id);
+        return view('show', compact('post'));
     }
 
     public function update()

@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+                <div class="card-header">{{ __('Cadastrar Notícia') }}</div>
 
 
                 @if (session('msg'))
@@ -24,7 +24,7 @@
                     <form action="{{ route('noticias.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
-                            <label for="image">Adicione a Imagem</label>
+                            <label for="image">Imagem</label>
                             <input type="file" class="form-control-file p-2" name="image" aria-describedby="form-post">
                         </div>
                         <div class="form-group">

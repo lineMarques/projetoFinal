@@ -11,24 +11,46 @@
 
 
     @include('layouts.app')
-
     {{ $userPost->links() }}
-
-    <hr>
-
     @foreach ($userPost as $userPost)
 
-    id Post: {{ $userPost->id }}<br>
-    titulo: {{ $userPost->title }}<br>
-    sub :{{ $userPost->subTitle }}<br>
-    Por: {{ $userPost->name }} <br>
-    criado em :{{ $userPost->created_at }}<br>
 
-    <img src="{{ url("storage{$userPost->image}") }}" alt="{{ $userPost->title }}">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header m-2">{{ __("$userPost->title") }}</div>
+                    <div class="card-body">
+                        @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                        @endif
 
+                        <form action="{{ route('noticias.store') }}">
+                            <div class="form-group">
+                                <label for="title">Título</label>
+                                <input type="text" class="form-control p-2" name="title" aria-describedby="form-post" value="{{ $userPost->title }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="subTitle">Sub-título</label>
+                                <input type="text" class="form-control p-2" name="subTitle" value="{{ $userPost->subTitle }}">
+                            </div>
 
-    <a href="{{ route('noticias.show', $userPost->id) }}">Ver</a><br><br>
-
+                            <div class="form-group">
+                                <label for="subTitle">Autor</label>
+                                <input type="text" class="form-control p-2" name="subTitle" value="{{ $userPost->name }}">
+                            </div>
+                            <div>{{ $userPost->created_at }}</div>
+                            <a href="{{ route("noticias.show", $userPost->id) }}">
+                                <button type="button" class="m-2 btn btn-primary">Ler Mais</button>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     @endforeach
 
 
