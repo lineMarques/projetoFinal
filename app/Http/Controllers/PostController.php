@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\{
     Post,
-    User
+    User,
+    Image,
 };
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,19 +17,20 @@ class PostController extends Controller
 {
     protected $post;
     protected $user;
+    protected $image;
 
-    public function __construct(Post $post, User $user)
+    public function __construct(Post $post, User $user, Image $image)
     {
         $this->post = $post;
         $this->user = $user;
+        $this->image = $image;
     }
     public function index()
     {
-
-
         $userPost = DB::table('posts')
-            ->select('posts.id', 'title', 'subTitle', 'name', 'image', 'posts.created_at')
+            ->select('posts.id', 'title', 'subTitle', 'name', 'path', 'posts.created_at')
             ->join('users', 'users.id', '=', 'posts.user_id')
+            ->join('images', 'images.post_id', '=', 'posts.id')
             ->orderByDesc('created_at')
             ->paginate(20);
 
@@ -37,11 +40,21 @@ class PostController extends Controller
     public function store(Request $request)
     {
 
-        $data = $request->all();
-
         $user = $this->user->find(Auth::id());
-
         $user->posts()->create($request->all());
+
+        if ($request->path) {
+
+            $image = $this->image;
+            $post = $this->post->latest('id')->first();
+
+            $image->post_id = $post->id;
+            $image->path = $request->path->storeAs('images', now() . '.' . $request->path->extension());
+
+            $image->save();
+
+        }
+
 
         return redirect('home')->with('msg', 'Sua notícia foi criada');
 
@@ -50,7 +63,12 @@ class PostController extends Controller
     public function show($id)
     {
         $post = $this->post->findOrFail($id);
-        return view('show', compact('post'));
+        $user = $this->user->where('id', $post->user_id)->first()->toArray();
+        $image = $this->image->where('post_id', $post->id)->first();
+
+
+
+        return view('show', compact('post', 'user', 'image'));
     }
 
     public function update()

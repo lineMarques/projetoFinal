@@ -13,12 +13,16 @@ class Post extends Model
         'title',
         'subTitle',
         'content',
-        'image',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function image()
+    {
+        return $this->hasOne(Image::class);
     }
 
 }
